@@ -37,12 +37,16 @@ $('h1').on('click', '.fa-plus', function() {
 });
 
 const container = document.querySelector('#container');
+
+//info about position of div
 let offX = 0;
 let offY = 0;
 let initialX;
 let initialY;
 let currentX;
 let currentY;
+
+let offset;
 
 //logic is as following:
 // - First get original position
@@ -73,12 +77,40 @@ function drag(e) {
 	offY = currentY;
 
 	setTranslate(currentX, currentY, container);
+	//get offset of container div
+	offset = $('#container').offset();
+	//save offset to local storage
+	setItemInStorage('offset', offset);
 }
 //remove move listener on window
 function mouseUp(e) {
 	window.removeEventListener('mousemove', drag);
+	//get position
 }
 //translate to new position with css
 function setTranslate(x, y, el) {
 	el.style.transform = 'translate3d(' + x + 'px, ' + y + 'px, 0)';
 }
+
+//local storage functionality
+function setItemInStorage(dataKey, data) {
+	localStorage.setItem(dataKey, JSON.stringify(data));
+}
+
+function getItemFromStorage(dataKey) {
+	//retrieve data and convert to object
+	const data = localStorage.getItem(dataKey);
+	return data ? JSON.parse(data) : null;
+}
+
+//set initial position retrieved from local storage
+const localOffset = getItemFromStorage('offset');
+if (localOffset) {
+	$('#container').offset(localOffset);
+}
+
+//Save position data to localstorage
+//1. Get the position
+//2. save it on local storage (convert object to string JSON)
+//3. On reload, retrieve saved data + convert to object
+// localStorage.clear();
